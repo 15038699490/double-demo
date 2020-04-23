@@ -6,23 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author  YuanZhiWei
+ * @author  yzw
  * @date    2020/04/23
  */
 public class BeanShellKit {
 
-    public static void main(String[] args) throws Exception {
-        String javaCode = "System.out.println(\"abc\");" +
-                "int b = 3;" +
-                "int b = a+b;";
-        Map map = new HashMap();
-        map.put("a", 2);
-        Object result = executeJavaCode(javaCode, map, "b");
-        System.out.println(result);
-    }
-
     /**
-     * 执行一段Java代码，传入一些变量，获取一个变量的值
+     * 执行一段Java代码字符串，传入一些变量，获取一个变量的值
      *
      * @param javaCode       java代码字符串
      * @param inParameterMap 输入的值变量，key-value形式
@@ -31,6 +21,7 @@ public class BeanShellKit {
      */
     public static Object executeJavaCode(String javaCode, Map<String, Object> inParameterMap, String outParamName) {
         Interpreter inter = new Interpreter();
+        //遍历参数，写入inter
         for (Map.Entry<String, Object> entry : inParameterMap.entrySet()) {
             try {
                 inter.set(entry.getKey(), entry.getValue());
@@ -39,10 +30,13 @@ public class BeanShellKit {
             }
         }
         try {
+            //执行eval方法，进行计算
             inter.eval(javaCode);
+            //返回结果
             return inter.get(outParamName);
         } catch (Exception e) {
             e.printStackTrace();
+            //捕获异常，打印代码字符串
             System.out.println("javaCode:\n"+javaCode);
             return null;
         }
